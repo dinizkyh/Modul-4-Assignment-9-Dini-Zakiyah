@@ -1,0 +1,4 @@
+-- Rollback migration scripts
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS lists;
+DROP TABLE IF EXISTS users;
