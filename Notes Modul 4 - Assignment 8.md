@@ -47,7 +47,3 @@ flowchart TD
 - Responsive dan dark mode diaktifkan dengan Tailwind utility class.
 
 ---
-
-**Referensi:**  
-- [PRD](./prd.md)  
-- [Checklist Implementasi](././implementation-checklist.md)
