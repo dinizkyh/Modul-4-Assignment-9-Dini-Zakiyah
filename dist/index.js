@@ -56,7 +56,8 @@ class MemoryUserRepository {
   }
   async findByEmail(email) {
     const userId = this.emailIndex.get(email.toLowerCase());
-    if (!userId) return null;
+    if (!userId)
+      return null;
     return this.users.get(userId) || null;
   }
   async findById(id) {
@@ -64,7 +65,8 @@ class MemoryUserRepository {
   }
   async update(id, updates) {
     const user = this.users.get(id);
-    if (!user) return null;
+    if (!user)
+      return null;
     if (updates.email && updates.email !== user.email) {
       this.emailIndex.delete(user.email.toLowerCase());
       this.emailIndex.set(updates.email.toLowerCase(), user.id);
@@ -79,7 +81,8 @@ class MemoryUserRepository {
   }
   async delete(id) {
     const user = this.users.get(id);
-    if (!user) return false;
+    if (!user)
+      return false;
     this.users.delete(id);
     this.emailIndex.delete(user.email.toLowerCase());
     return true;
@@ -113,7 +116,8 @@ class MemoryListRepository {
   }
   async findByUserId(userId) {
     const listIds = this.userListIndex.get(userId);
-    if (!listIds) return [];
+    if (!listIds)
+      return [];
     const lists = [];
     for (const listId of listIds) {
       const list = this.lists.get(listId);
@@ -125,12 +129,14 @@ class MemoryListRepository {
   }
   async findByIdAndUserId(id, userId) {
     const list = this.lists.get(id);
-    if (!list || list.userId !== userId) return null;
+    if (!list || list.userId !== userId)
+      return null;
     return list;
   }
   async update(id, updates) {
     const list = this.lists.get(id);
-    if (!list) return null;
+    if (!list)
+      return null;
     const updatedList = {
       ...list,
       ...updates,
@@ -141,7 +147,8 @@ class MemoryListRepository {
   }
   async delete(id) {
     const list = this.lists.get(id);
-    if (!list) return false;
+    if (!list)
+      return false;
     this.lists.delete(id);
     const userLists = this.userListIndex.get(list.userId);
     if (userLists) {
@@ -192,7 +199,8 @@ class MemoryTaskRepository {
   }
   async findByUserId(userId) {
     const taskIds = this.userTaskIndex.get(userId);
-    if (!taskIds) return [];
+    if (!taskIds)
+      return [];
     const tasks2 = [];
     for (const taskId of taskIds) {
       const task = this.tasks.get(taskId);
@@ -204,7 +212,8 @@ class MemoryTaskRepository {
   }
   async findByListId(listId, userId) {
     const taskIds = this.listTaskIndex.get(listId);
-    if (!taskIds) return [];
+    if (!taskIds)
+      return [];
     const tasks2 = [];
     for (const taskId of taskIds) {
       const task = this.tasks.get(taskId);
@@ -216,12 +225,14 @@ class MemoryTaskRepository {
   }
   async findByIdAndUserId(id, userId) {
     const task = this.tasks.get(id);
-    if (!task || task.userId !== userId) return null;
+    if (!task || task.userId !== userId)
+      return null;
     return task;
   }
   async update(id, updates) {
     const task = this.tasks.get(id);
-    if (!task) return null;
+    if (!task)
+      return null;
     const updatedTask = {
       ...task,
       ...updates,
@@ -232,7 +243,8 @@ class MemoryTaskRepository {
   }
   async delete(id) {
     const task = this.tasks.get(id);
-    if (!task) return false;
+    if (!task)
+      return false;
     this.tasks.delete(id);
     const userTasks = this.userTaskIndex.get(task.userId);
     if (userTasks) {
@@ -252,18 +264,21 @@ class MemoryTaskRepository {
   }
   async deleteByListId(listId) {
     const taskIds = this.listTaskIndex.get(listId);
-    if (!taskIds) return 0;
+    if (!taskIds)
+      return 0;
     let deletedCount = 0;
     for (const taskId of Array.from(taskIds)) {
       const deleted = await this.delete(taskId);
-      if (deleted) deletedCount++;
+      if (deleted)
+        deletedCount++;
     }
     return deletedCount;
   }
   async findDueInRange(userId, startDate, endDate) {
     const userTasks = await this.findByUserId(userId);
     return userTasks.filter((task) => {
-      if (!task.deadline) return false;
+      if (!task.deadline)
+        return false;
       const deadline = new Date(task.deadline);
       return deadline >= startDate && deadline <= endDate;
     });
@@ -307,7 +322,7 @@ class SQLUserRepository {
   async create(userData) {
     const id = uuid.v4();
     const now = /* @__PURE__ */ new Date();
-    const [result] = await this.pool.execute(
+    await this.pool.execute(
       "INSERT INTO users (id, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
       [id, userData.email, userData.password, now, now]
     );
@@ -323,7 +338,8 @@ class SQLUserRepository {
       "SELECT * FROM users WHERE email = ?",
       [email]
     );
-    if (rows.length === 0) return null;
+    if (rows.length === 0)
+      return null;
     const row = rows[0];
     return {
       id: row.id,
@@ -338,7 +354,8 @@ class SQLUserRepository {
       "SELECT * FROM users WHERE id = ?",
       [id]
     );
-    if (rows.length === 0) return null;
+    if (rows.length === 0)
+      return null;
     const row = rows[0];
     return {
       id: row.id,
@@ -355,7 +372,8 @@ class SQLUserRepository {
       `UPDATE users SET ${setClause}, updated_at = ? WHERE id = ?`,
       values
     );
-    if (result.affectedRows === 0) return null;
+    if (result.affectedRows === 0)
+      return null;
     return this.findById(id);
   }
   async delete(id) {
@@ -403,7 +421,8 @@ class SQLListRepository {
       "SELECT * FROM lists WHERE id = ? AND user_id = ?",
       [id, userId]
     );
-    if (rows.length === 0) return null;
+    if (rows.length === 0)
+      return null;
     const row = rows[0];
     return {
       id: row.id,
@@ -421,7 +440,8 @@ class SQLListRepository {
       `UPDATE lists SET ${setClause}, updated_at = ? WHERE id = ?`,
       values
     );
-    if (result.affectedRows === 0) return null;
+    if (result.affectedRows === 0)
+      return null;
     const [rows] = await this.pool.execute(
       "SELECT * FROM lists WHERE id = ?",
       [id]
@@ -501,13 +521,16 @@ class SQLTaskRepository {
       "SELECT * FROM tasks WHERE id = ? AND user_id = ?",
       [id, userId]
     );
-    if (rows.length === 0) return null;
+    if (rows.length === 0)
+      return null;
     return this.mapRowToTask(rows[0]);
   }
   async update(id, updates) {
     const setClause = Object.keys(updates).map((key) => {
-      if (key === "isCompleted") return "is_completed = ?";
-      if (key === "listId") return "list_id = ?";
+      if (key === "isCompleted")
+        return "is_completed = ?";
+      if (key === "listId")
+        return "list_id = ?";
       return `${key} = ?`;
     }).join(", ");
     const values = [...Object.values(updates), /* @__PURE__ */ new Date(), id];
@@ -515,7 +538,8 @@ class SQLTaskRepository {
       `UPDATE tasks SET ${setClause}, updated_at = ? WHERE id = ?`,
       values
     );
-    if (result.affectedRows === 0) return null;
+    if (result.affectedRows === 0)
+      return null;
     const [rows] = await this.pool.execute(
       "SELECT * FROM tasks WHERE id = ?",
       [id]
@@ -569,15 +593,6 @@ class SQLTaskRepository {
   }
 }
 class RepositoryFactory {
-  static {
-    this.userRepository = null;
-  }
-  static {
-    this.listRepository = null;
-  }
-  static {
-    this.taskRepository = null;
-  }
   /**
    * Get User repository instance
    */
@@ -639,6 +654,9 @@ class RepositoryFactory {
     }
   }
 }
+RepositoryFactory.userRepository = null;
+RepositoryFactory.listRepository = null;
+RepositoryFactory.taskRepository = null;
 class AppError extends Error {
   constructor(message, statusCode, code, details) {
     super(message);
@@ -731,7 +749,8 @@ class JWTUtils {
    * @returns string | null Extracted token or null if invalid format
    */
   static extractBearerToken(authHeader) {
-    if (!authHeader) return null;
+    if (!authHeader)
+      return null;
     const parts = authHeader.split(" ");
     if (parts.length !== 2 || parts[0] !== "Bearer") {
       return null;
@@ -740,9 +759,6 @@ class JWTUtils {
   }
 }
 class PasswordUtils {
-  static {
-    this.SALT_ROUNDS = 12;
-  }
   /**
    * Hash password using bcrypt
    * @param password Plain text password
@@ -772,10 +788,8 @@ class PasswordUtils {
     return minLength && hasLetter && hasNumber;
   }
 }
+PasswordUtils.SALT_ROUNDS = 12;
 class EmailUtils {
-  static {
-    this.EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  }
   /**
    * Validate email format
    * @param email Email to validate
@@ -793,6 +807,7 @@ class EmailUtils {
     return email.trim().toLowerCase();
   }
 }
+EmailUtils.EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 class UserService {
   constructor() {
     this.userRepository = RepositoryFactory.getUserRepository();
@@ -1407,9 +1422,9 @@ const router$1 = express.Router();
 router$1.get("/:id", (req, res) => {
   const task = tasks.find((t) => t.id === req.params.id);
   if (!task) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ success: false, message: "Task not found" });
   }
-  return res.json(task);
+  return res.json({ success: true, data: { task }, message: "Task retrieved successfully" });
 });
 router$1.post("/", (req, res) => {
   const newTask = {
@@ -1423,7 +1438,7 @@ router$1.post("/", (req, res) => {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
   tasks.push(newTask);
-  res.status(201).json(newTask);
+  res.status(201).json({ success: true, data: { task: newTask }, message: "Task created successfully" });
 });
 router$1.post("/:listId/tasks", (req, res) => {
   const newTask = {
@@ -1437,12 +1452,12 @@ router$1.post("/:listId/tasks", (req, res) => {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
   tasks.push(newTask);
-  res.status(201).json(newTask);
+  res.status(201).json({ success: true, data: { task: newTask }, message: "Task created successfully" });
 });
 router$1.put("/:id", (req, res) => {
   const idx = tasks.findIndex((t) => t.id === req.params.id);
   if (idx === -1) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ success: false, message: "Task not found" });
   }
   const updatedTask = {
     ...tasks[idx],
@@ -1454,28 +1469,28 @@ router$1.put("/:id", (req, res) => {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
   tasks[idx] = updatedTask;
-  return res.json(updatedTask);
+  return res.json({ success: true, data: { task: updatedTask }, message: "Task updated successfully" });
 });
 router$1.delete("/:id", (req, res) => {
   const idx = tasks.findIndex((t) => t.id === req.params.id);
   if (idx === -1) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ success: false, message: "Task not found" });
   }
   tasks.splice(idx, 1);
-  return res.status(204).send();
+  return res.status(200).json({ success: true, message: "Task deleted successfully" });
 });
 router$1.patch("/:id/complete", (req, res) => {
   const idx = tasks.findIndex((t) => t.id === req.params.id);
   if (idx === -1) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ success: false, message: "Task not found" });
   }
   tasks[idx].completed = !tasks[idx].completed;
   tasks[idx].updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  return res.json(tasks[idx]);
+  return res.json({ success: true, data: { task: tasks[idx] }, message: "Task completion toggled" });
 });
 router$1.get("/:listId/tasks", (req, res) => {
   const listTasks = tasks.filter((t) => t.listId === req.params.listId);
-  return res.status(200).json(listTasks);
+  return res.status(200).json({ success: true, data: { tasks: listTasks }, message: "Tasks retrieved successfully" });
 });
 router$1.get("/due-this-week", (req, res) => {
   const now = /* @__PURE__ */ new Date();
@@ -1484,22 +1499,25 @@ router$1.get("/due-this-week", (req, res) => {
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
   const result = tasks.filter((t) => {
-    if (!t.dueDate) return false;
+    if (!t.dueDate)
+      return false;
     const due = new Date(t.dueDate);
     return due >= startOfWeek && due <= endOfWeek;
   });
-  return res.status(200).json(result);
+  return res.status(200).json({ success: true, data: { tasks: result }, message: "Tasks due this week retrieved successfully" });
 });
 router$1.get("/", (req, res) => {
   let result = [...tasks];
   if (req.query.sort === "deadline") {
     result.sort((a, b) => {
-      if (!a.dueDate) return 1;
-      if (!b.dueDate) return -1;
+      if (!a.dueDate)
+        return 1;
+      if (!b.dueDate)
+        return -1;
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     });
   }
-  return res.status(200).json(result);
+  return res.status(200).json({ success: true, data: { tasks: result }, message: "Tasks retrieved successfully" });
 });
 const router = express.Router();
 const userService = new UserService();

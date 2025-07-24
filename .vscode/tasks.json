@@ -10,6 +10,22 @@
 			"problemMatcher": [
 				"$tsc"
 			]
+		},
+		{
+			"type": "shell",
+			"label": "Start Frontend Dev Server",
+			"command": "npm run dev",
+			"group": "build",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}/apps/frontend"
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		}
 	]
 }
