@@ -50,4 +50,4 @@ flowchart TD
 
 **Referensi:**  
 - [PRD](./prd.md)  
-- [Checklist Testing](./test-case-checklist.md)
+- [Checklist Implementasi](./implementation-checklist.md)
